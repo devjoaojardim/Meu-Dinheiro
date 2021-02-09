@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1001211633282",
+    "project_id": "meu-dinheiro-ff26e",
+    "storage_bucket": "meu-dinheiro-ff26e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1001211633282:android:6ee932efe01896d5145e9b",
+        "android_client_info": {
+          "package_name": "com.jvapp.meudinheiro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1001211633282-vnr8rdlfneh6h4ksk3ihf536rbrr4dps.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jvapp.meudinheiro",
+            "certificate_hash": "ea0d2ee766addee130815fc4b09885a8b6733888"
+          }
+        },
+        {
+          "client_id": "1001211633282-t7el1tf2u0532imo42u0vuppss1i7rm7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvf63bXsGDoJJz_qTxdShgitBH80JrLKk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1001211633282-t7el1tf2u0532imo42u0vuppss1i7rm7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
