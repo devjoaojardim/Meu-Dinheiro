@@ -56,31 +56,31 @@ class MainActivity : IntroActivity() {
         isButtonNextVisible = false
         addSlide(
             FragmentSlide.Builder()
-                .background(android.R.color.holo_orange_dark)
+                .background(R.color.colorAzulVerdiadoEscuro)
                 .fragment(R.layout.intro_1)
                 .build()
         )
         addSlide(
             FragmentSlide.Builder()
-                .background(android.R.color.holo_orange_light)
+                .background(R.color.colorAzulVerdiadoClaro)
                 .fragment(R.layout.intro_2)
                 .build()
         )
         addSlide(
             FragmentSlide.Builder()
-                .background(android.R.color.holo_orange_dark)
+                .background(R.color.colorAzulVerdiadoEscuro)
                 .fragment(R.layout.intro_3)
                 .build()
         )
         addSlide(
             FragmentSlide.Builder()
-                .background(android.R.color.holo_orange_light)
+                .background(R.color.colorAzulVerdiadoClaro)
                 .fragment(R.layout.intro_4)
                 .build()
         )
         addSlide(
             FragmentSlide.Builder()
-                .background(android.R.color.holo_orange_dark)
+                .background(R.color.colorAzulVerdiadoEscuro)
                 .fragment(R.layout.intro_cadastro)
                 .canGoForward(false)
                 .build()

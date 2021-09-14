@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/holo_orange_light"
+        android:background="@color/colorAzulVerdiadoClaro"
         tools:context=".activity.CadastroActivity"
         tools:layout_editor_absoluteX="-38dp"
         tools:layout_editor_absoluteY="60dp">
@@ -67,7 +67,7 @@
             android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:text="Entrar"
-            android:textColor="@android:color/holo_orange_light"
+            android:textColor="@color/colorAzulVerdiadoClaro"
             app:layout_constraintBottom_toTopOf="@+id/textEsqueceuSenha"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

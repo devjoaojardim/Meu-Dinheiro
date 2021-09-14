@@ -8,4 +8,6 @@
     <color name="colorButtonFloatNormal">#83DE87</color>
     <color name="colorButtonVermelho">#D54A4A</color>
     <color name="colorButtonVermelhoDark">#D32F2F</color>
+    <color name="colorAzulVerdiadoEscuro">#025373</color>
+    <color name="colorAzulVerdiadoClaro">#03738C</color>
 </resources>

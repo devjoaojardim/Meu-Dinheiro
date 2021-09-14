@@ -45,7 +45,7 @@
         android:background="@android:color/white"
         android:onClick="btCadastrar"
         android:text="Cadastre-se"
-        android:textColor="@android:color/holo_orange_dark"
+        android:textColor="#03738C"
         app:layout_constraintBottom_toTopOf="@+id/textView5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
