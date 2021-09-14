@@ -1,153 +1,163 @@
-package com.jvapp.meudinheiro.activity;
+package com.jvapp.meudinheiro.activity
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity
+import android.widget.EditText
+import com.google.firebase.auth.FirebaseAuth
+import com.jvapp.meudinheiro.model.Usuario
+import android.os.Bundle
+import com.jvapp.meudinheiro.R
+import android.widget.Toast
+import com.jvapp.meudinheiro.config.ConfiguracaoFirebase
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.AuthResult
+import com.jvapp.meudinheiro.helper.Base64Custom
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.android.material.textfield.TextInputEditText
+import com.jvapp.meudinheiro.model.Movimentacao
+import com.google.firebase.database.DatabaseReference
+import com.jvapp.meudinheiro.helper.DateUtil
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.navigation.fragment.NavHostFragment
+import android.widget.TextView
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import android.content.Intent
+import com.jvapp.meudinheiro.activity.PrincipalActivity
+import com.heinrichreimersoftware.materialintro.app.IntroActivity
+import com.heinrichreimersoftware.materialintro.slide.FragmentSlide
+import com.jvapp.meudinheiro.activity.LoginActivity
+import com.jvapp.meudinheiro.activity.CadastroActivity
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import androidx.recyclerview.widget.RecyclerView
+import com.jvapp.meudinheiro.adapter.AdapterMovimentacao
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import android.content.DialogInterface
+import android.view.View
+import android.widget.Button
+import com.jvapp.meudinheiro.activity.MainActivity
+import com.jvapp.meudinheiro.activity.DespesasActivity
+import com.jvapp.meudinheiro.activity.ReceitasActivity
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
+import com.jvapp.meudinheiro.adapter.AdapterMovimentacao.MyViewHolder
+import com.google.firebase.database.Exclude
+import java.lang.Exception
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.jvapp.meudinheiro.R;
-import com.jvapp.meudinheiro.config.ConfiguracaoFirebase;
-import com.jvapp.meudinheiro.model.Usuario;
-
-public class LoginActivity extends AppCompatActivity {
+class LoginActivity : AppCompatActivity() {
     //Atributos para entra no Aplicativo
-    private EditText campoEmail, campoSenha;
-    private Button buttonEntrar;
-    private Usuario usuario;
-    private TextView textEsqueceuSenha;
-    private FirebaseAuth autenticacao;
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+    private var campoEmail: EditText? = null
+    private var campoSenha: EditText? = null
+    private var buttonEntrar: Button? = null
+    private var usuario: Usuario? = null
+    private var textEsqueceuSenha: TextView? = null
+    private var autenticacao: FirebaseAuth? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_login)
+        //Toobar
+        supportActionBar!!.title = "Login"
         //Recuperar do Layout
-        campoEmail      = findViewById(R.id.editEmail);
-        campoSenha      = findViewById(R.id.editSenha);
-        buttonEntrar    = findViewById(R.id.buttonEntrar);
-        textEsqueceuSenha = findViewById(R.id.textEsqueceuSenha);
+        campoEmail = findViewById(R.id.editEmail)
+        campoSenha = findViewById(R.id.editSenha)
+        buttonEntrar = findViewById(R.id.buttonEntrar)
+        textEsqueceuSenha = findViewById(R.id.textEsqueceuSenha)
 
         //Adicionar evento de click para entrar
-        buttonEntrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String textoEmail = campoEmail.getText().toString();
-                String textoSenha = campoSenha.getText().toString();
-                if(!textoEmail.isEmpty()){
-                    if(!textoSenha.isEmpty()){
-
-                        usuario = new Usuario();
-                        usuario.setEmail( textoEmail );
-                        usuario.setSenha( textoSenha );
-                        validarLogin();
-
-
-                    }else{
-                        Toast.makeText(LoginActivity.this,"Preencha a senha",
-                                Toast.LENGTH_LONG).show();
-                    }
-
-                }else{
-                    Toast.makeText(LoginActivity.this,"Preencha o email",
-                            Toast.LENGTH_LONG).show();
+        buttonEntrar!!.setOnClickListener(View.OnClickListener {
+            val textoEmail = campoEmail!!.text.toString()
+            val textoSenha = campoSenha!!.text.toString()
+            if (!textoEmail.isEmpty()) {
+                if (!textoSenha.isEmpty()) {
+                    usuario = Usuario()
+                    usuario!!.email = textoEmail
+                    usuario!!.senha = textoSenha
+                    validarLogin()
+                } else {
+                    Toast.makeText(
+                        this@LoginActivity, "Preencha a senha",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
-                //Fim da Validação
-
+            } else {
+                Toast.makeText(
+                    this@LoginActivity, "Preencha o email",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-        });
+            //Fim da Validação
+        })
         //Click para Esqueceu a senha
-        textEsqueceuSenha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                autenticacao = ConfiguracaoFirebase.getAutenticacao();
-                final String textoEmail = campoEmail.getText().toString();
-                usuario = new Usuario();
-                usuario.setEmail( textoEmail );
-
-                autenticacao.sendPasswordResetEmail(textoEmail)
-                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()){
-                                    Toast.makeText(LoginActivity.this,"Redefinicão de senha Envia para: " +textoEmail,
-                                            Toast.LENGTH_LONG).show();
-                                }else{
-                                    String excecao = "";
-                                    try {
-                                        throw task.getException();
-                                    }catch (FirebaseAuthInvalidUserException e) {
-                                        excecao = "Usuário não está cadastrado.";
-                                    }catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    Toast.makeText(LoginActivity.this,"Usuário não está cadastrado." ,
-                                            Toast.LENGTH_LONG).show();
-                                }
-
-                            }
-                        });
-
-
-            }
-        });
+        textEsqueceuSenha!!.setOnClickListener(View.OnClickListener {
+            autenticacao = ConfiguracaoFirebase.getAutenticacao()
+            val textoEmail = campoEmail!!.text.toString()
+            usuario = Usuario()
+            usuario!!.email = textoEmail
+            autenticacao!!.sendPasswordResetEmail(textoEmail)
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        Toast.makeText(
+                            this@LoginActivity, "Redefinicão de senha Envia para: $textoEmail",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    } else {
+                        var excecao = ""
+                        try {
+                            throw task.exception!!
+                        } catch (e: FirebaseAuthInvalidUserException) {
+                            excecao = "Usuário não está cadastrado."
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        Toast.makeText(
+                            this@LoginActivity, "Usuário não está cadastrado.",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+        })
 
 
         //Fim dos eventos de click
     }
+
     //Criar metedo para valida a entrada do usuario
-    public void validarLogin(){
-
-        autenticacao = ConfiguracaoFirebase.getAutenticacao();
-        autenticacao.signInWithEmailAndPassword(
-               usuario.getEmail(),
-               usuario.getSenha()
-        ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    abrirTelaPrincipal();
-
-                }else{
-                    String excecao = "";
-                    try {
-                        throw task.getException();
-                    }catch (FirebaseAuthInvalidUserException e) {
-                        excecao = "Usuário não está cadastrado.";
-                    }catch (FirebaseAuthInvalidCredentialsException e) {
-                        excecao = "E-mail e senha não correspondem a um usuário cadastrado";
-                    }catch (Exception e){
-                        excecao = "Erro ao fazer Login " + e.getMessage();
-                        e.printStackTrace();
-                    }
-
-
-                    Toast.makeText(LoginActivity.this,excecao,
-                            Toast.LENGTH_LONG).show();
+    fun validarLogin() {
+        autenticacao = ConfiguracaoFirebase.getAutenticacao()
+        autenticacao!!.signInWithEmailAndPassword(
+            usuario!!.email.toString(),
+            usuario!!.senha.toString()
+        ).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                abrirTelaPrincipal()
+            } else {
+                var excecao = ""
+                try {
+                    throw task.exception!!
+                } catch (e: FirebaseAuthInvalidUserException) {
+                    excecao = "Usuário não está cadastrado."
+                } catch (e: FirebaseAuthInvalidCredentialsException) {
+                    excecao = "E-mail e senha não correspondem a um usuário cadastrado"
+                } catch (e: Exception) {
+                    excecao = "Erro ao fazer Login " + e.message
+                    e.printStackTrace()
                 }
+                Toast.makeText(
+                    this@LoginActivity, excecao,
+                    Toast.LENGTH_LONG
+                ).show()
             }
-        });
-
-
+        }
     }
+
     //metodo para abrir a tela Principal
-    public void abrirTelaPrincipal(){
-        startActivity(new Intent(this,PrincipalActivity.class));
-        finish();
+    fun abrirTelaPrincipal() {
+        startActivity(Intent(this, PrincipalActivity::class.java))
+        finish()
     }
-
 }

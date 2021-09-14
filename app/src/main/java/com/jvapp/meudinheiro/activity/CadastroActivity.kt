@@ -1,120 +1,145 @@
-package com.jvapp.meudinheiro.activity;
+package com.jvapp.meudinheiro.activity
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity
+import android.widget.EditText
+import com.google.firebase.auth.FirebaseAuth
+import com.jvapp.meudinheiro.model.Usuario
+import android.os.Bundle
+import com.jvapp.meudinheiro.R
+import android.widget.Toast
+import com.jvapp.meudinheiro.config.ConfiguracaoFirebase
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.auth.AuthResult
+import com.jvapp.meudinheiro.helper.Base64Custom
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.android.material.textfield.TextInputEditText
+import com.jvapp.meudinheiro.model.Movimentacao
+import com.google.firebase.database.DatabaseReference
+import com.jvapp.meudinheiro.helper.DateUtil
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.navigation.fragment.NavHostFragment
+import android.widget.TextView
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import android.content.Intent
+import com.jvapp.meudinheiro.activity.PrincipalActivity
+import com.heinrichreimersoftware.materialintro.app.IntroActivity
+import com.heinrichreimersoftware.materialintro.slide.FragmentSlide
+import com.jvapp.meudinheiro.activity.LoginActivity
+import com.jvapp.meudinheiro.activity.CadastroActivity
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import androidx.recyclerview.widget.RecyclerView
+import com.jvapp.meudinheiro.adapter.AdapterMovimentacao
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import android.content.DialogInterface
+import android.view.View
+import android.widget.Button
+import com.jvapp.meudinheiro.activity.MainActivity
+import com.jvapp.meudinheiro.activity.DespesasActivity
+import com.jvapp.meudinheiro.activity.ReceitasActivity
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
+import com.jvapp.meudinheiro.adapter.AdapterMovimentacao.MyViewHolder
+import com.google.firebase.database.Exclude
+import java.lang.Exception
 
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
-import com.jvapp.meudinheiro.R;
-import com.jvapp.meudinheiro.config.ConfiguracaoFirebase;
-import com.jvapp.meudinheiro.model.Usuario;
-
-public class CadastroActivity extends AppCompatActivity {
+class CadastroActivity : AppCompatActivity() {
     //Atributos para cadastro
-    private EditText campoNome, campoEmail, campoSenha;
-    private Button buttonCadastrar;
-   //Atributo de Autenticação
-   private FirebaseAuth autenticacao;
-   private Usuario usuario;
+    private var campoNome: EditText? = null
+    private var campoEmail: EditText? = null
+    private var campoSenha: EditText? = null
+    private var buttonCadastrar: Button? = null
 
-
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_cadastro);
+    //Atributo de Autenticação
+    private var autenticacao: FirebaseAuth? = null
+    private var usuario: Usuario? = null
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_cadastro)
+        //Toobar
+        supportActionBar!!.title = "Cadastro"
 
         // Recuperando os campos do Layout
-        campoNome       = findViewById(R.id.editNome);
-        campoEmail      = findViewById(R.id.editEmail);
-        campoSenha      = findViewById(R.id.editSenha);
-        buttonCadastrar = findViewById(R.id.buttonCadastrar);
+        campoNome = findViewById(R.id.editNome)
+        campoEmail = findViewById(R.id.editEmail)
+        campoSenha = findViewById(R.id.editSenha)
+        buttonCadastrar = findViewById(R.id.buttonCadastrar)
 
-       // Aplicando a função click do Buttão Cadastro
-       buttonCadastrar.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               //Recupera o que usuario digitou e transforma em String
-                String textoNome = campoNome.getText().toString();
-                String textoEmail = campoEmail.getText().toString();
-                String textoSenha = campoSenha.getText().toString();
+        // Aplicando a função click do Buttão Cadastro
+        buttonCadastrar!!.setOnClickListener(View.OnClickListener {
+            //Recupera o que usuario digitou e transforma em String
+            val textoNome = campoNome!!.getText().toString()
+            val textoEmail = campoEmail!!.getText().toString()
+            val textoSenha = campoSenha!!.getText().toString()
 
-              //Validar se os campos foram preenchidos
-               if(!textoNome.isEmpty()){
-                   if(!textoEmail.isEmpty()){
-                       if(!textoSenha.isEmpty()){
-
-                           usuario = new Usuario();
-                           usuario.setNome(textoNome);
-                           usuario.setEmail(textoEmail);
-                           usuario.setSenha(textoSenha);
-                           cadastrarUsuario();
-
-
-                       }else{
-                           Toast.makeText(CadastroActivity.this,"Preencha a senha",
-                                   Toast.LENGTH_LONG).show();
-                       }
-
-                   }else{
-                       Toast.makeText(CadastroActivity.this,"Preencha o email",
-                               Toast.LENGTH_LONG).show();
-                   }
-
-               }else{
-                   Toast.makeText(CadastroActivity.this,"Preencha o nome",
-                           Toast.LENGTH_LONG).show();
-
-               }
-               //Fim da Validação
-
-           }
-       });
-    }
-    //metedo para autentica e cadastra o usuario
-    public void cadastrarUsuario(){
-
-        autenticacao = ConfiguracaoFirebase.getAutenticacao();
-        autenticacao.createUserWithEmailAndPassword(
-                usuario.getEmail(), usuario.getSenha()
-        ).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if(task.isSuccessful()){
-                    finish();
-                }else{
-                    String excecao = "";
-                    try {
-                        throw task.getException();
-                    }catch (FirebaseAuthWeakPasswordException e){
-                        excecao = "Digite uma senha mais forte!";
-                    }catch (FirebaseAuthInvalidCredentialsException e){
-                        excecao = "Por favor, digite um e-mail válido!";
-
-                    }catch (FirebaseAuthUserCollisionException e){
-                        excecao = "Esse email ja foi cadastrado";
-
-                    }catch (Exception e){
-                        excecao = "Erro ao cadastrar usuário: " + e.getMessage();
-                        e.printStackTrace();
+            //Validar se os campos foram preenchidos
+            if (!textoNome.isEmpty()) {
+                if (!textoEmail.isEmpty()) {
+                    if (!textoSenha.isEmpty()) {
+                        usuario = Usuario()
+                        usuario!!.nome = textoNome
+                        usuario!!.email = textoEmail
+                        usuario!!.senha = textoSenha
+                        cadastrarUsuario()
+                    } else {
+                        Toast.makeText(
+                            this@CadastroActivity, "Preencha a senha",
+                            Toast.LENGTH_LONG
+                        ).show()
                     }
-
-                    Toast.makeText(CadastroActivity.this,excecao,
-                            Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(
+                        this@CadastroActivity, "Preencha o email",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
+            } else {
+                Toast.makeText(
+                    this@CadastroActivity, "Preencha o nome",
+                    Toast.LENGTH_LONG
+                ).show()
             }
-        });
+            //Fim da Validação
+        })
+    }
 
+    //metedo para autentica e cadastra o usuario
+    fun cadastrarUsuario() {
+        autenticacao = ConfiguracaoFirebase.getAutenticacao()
+        autenticacao!!.createUserWithEmailAndPassword(
+            usuario!!.email.toString(), usuario!!.senha.toString()
+        ).addOnCompleteListener(this) { task ->
+            if (task.isSuccessful) {
+                //Salva usuario no banco de Dados
+                val idUsuario = Base64Custom.codificarBase64(usuario!!.email)
+                usuario!!.idUsuario = idUsuario
+                usuario!!.salvar()
+                finish()
+            } else {
+                var excecao = ""
+                try {
+                    throw task.exception!!
+                } catch (e: FirebaseAuthWeakPasswordException) {
+                    excecao = "Digite uma senha mais forte!"
+                } catch (e: FirebaseAuthInvalidCredentialsException) {
+                    excecao = "Por favor, digite um e-mail válido!"
+                } catch (e: FirebaseAuthUserCollisionException) {
+                    excecao = "Esse email ja foi cadastrado"
+                } catch (e: Exception) {
+                    excecao = "Erro ao cadastrar usuário: " + e.message
+                    e.printStackTrace()
+                }
+                Toast.makeText(
+                    this@CadastroActivity, excecao,
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
 }

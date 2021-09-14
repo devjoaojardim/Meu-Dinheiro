@@ -8,4 +8,25 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!--  Tema aplicado nas despesas  -->
+    <style name="ThemeDespesa" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimary">@color/colorButtonVermelho</item>
+        <item name="colorPrimaryDark">@color/colorButtonVermelhoDark</item>
+        <item name="colorAccent">@color/colorAccentBlack</item>
+
+    </style>
+
+    <!-- Tema aplicado nas Receitas    -->
+    <style name="ThemeReceita" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="colorPrimary">@color/colorButtonFloatNormal</item>
+        <item name="colorPrimaryDark">@color/colorButtonFloat</item>
+        <item name="colorAccent">@color/colorAccentBlack</item>
+    </style>
+
 </resources>

@@ -1,5 +1,6 @@
-package com.jvapp.meudinheiro.model
+package com.jvapp.meudinheiro.adapter
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.EditText
 import com.google.firebase.auth.FirebaseAuth
@@ -38,6 +39,8 @@ import com.jvapp.meudinheiro.adapter.AdapterMovimentacao
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import android.content.DialogInterface
+import android.util.Log
+import android.view.View
 import com.jvapp.meudinheiro.activity.MainActivity
 import com.jvapp.meudinheiro.activity.DespesasActivity
 import com.jvapp.meudinheiro.activity.ReceitasActivity
@@ -46,20 +49,43 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.jvapp.meudinheiro.adapter.AdapterMovimentacao.MyViewHolder
 import com.google.firebase.database.Exclude
 
-class Usuario {
-    @get:Exclude
-    var idUsuario: String? = null
-    var nome: String? = null
-    var email: String? = null
+class AdapterMovimentacao(var movimentacoes: List<Movimentacao>, var context: Context) :
+    RecyclerView.Adapter<MyViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
+        val itemLista = LayoutInflater.from(parent.context)
+            .inflate(R.layout.adapter_movimentacao, parent, false)
+        return MyViewHolder(itemLista)
+    }
 
-    @get:Exclude
-    var senha: String? = null
-    var receitaTotal = 0.00
-    var despesaTotal = 0.00
-    fun salvar() {
-        val firebase = ConfiguracaoFirebase.getFirebase()
-        firebase.child("usuarios")
-            .child(idUsuario!!)
-            .setValue(this)
+    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        val movimentacao = movimentacoes[position]
+        holder.titulo.text = movimentacao.descricao
+        holder.valor.text = movimentacao.valor.toString()
+        holder.categoria.text = movimentacao.categoria
+        holder.valor.setTextColor(context.resources.getColor(R.color.colorButtonFloat))
+        if (movimentacao.tipo === "d" || movimentacao.tipo == "d") {
+            holder.valor.setTextColor(context.resources.getColor(R.color.colorButtonVermelhoDark))
+            holder.valor.text = "-" + movimentacao.valor
+        }
+    }
+
+    override fun getItemCount(): Int {
+        return movimentacoes.size
+    }
+
+    inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var titulo: TextView
+        var valor: TextView
+        var categoria: TextView
+
+        init {
+            titulo = itemView.findViewById(R.id.textAdapterTitulo)
+            valor = itemView.findViewById(R.id.textAdapterValor)
+            categoria = itemView.findViewById(R.id.textAdapterCategoria)
+        }
+    }
+
+    init {
+        Log.i("FUNCIONANDO", "ESTA FUCIONANDO" + movimentacoes.size)
     }
 }

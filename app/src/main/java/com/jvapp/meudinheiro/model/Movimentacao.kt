@@ -46,20 +46,22 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.jvapp.meudinheiro.adapter.AdapterMovimentacao.MyViewHolder
 import com.google.firebase.database.Exclude
 
-class Usuario {
-    @get:Exclude
-    var idUsuario: String? = null
-    var nome: String? = null
-    var email: String? = null
-
-    @get:Exclude
-    var senha: String? = null
-    var receitaTotal = 0.00
-    var despesaTotal = 0.00
-    fun salvar() {
-        val firebase = ConfiguracaoFirebase.getFirebase()
-        firebase.child("usuarios")
+class Movimentacao {
+    var data: String? = null
+    var categoria: String? = null
+    var descricao: String? = null
+    var tipo: String? = null
+    var valor = 0.0
+    var key: String? = null
+    fun salvar(dataEscolhida: String) {
+        val auth = ConfiguracaoFirebase.getAutenticacao()
+        val idUsuario = Base64Custom.codificarBase64(auth.currentUser!!.email)
+        val mesAno = DateUtil.dataMesAno(dataEscolhida)
+        val reference = ConfiguracaoFirebase.getFirebase()
+        reference.child("movimentacao")
             .child(idUsuario!!)
+            .child(mesAno!!)
+            .push()
             .setValue(this)
     }
 }

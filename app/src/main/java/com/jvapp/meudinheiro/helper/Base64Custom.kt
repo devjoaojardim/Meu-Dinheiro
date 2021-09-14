@@ -1,4 +1,4 @@
-package com.jvapp.meudinheiro.model
+package com.jvapp.meudinheiro.helper
 
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.EditText
@@ -38,6 +38,7 @@ import com.jvapp.meudinheiro.adapter.AdapterMovimentacao
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import android.content.DialogInterface
+import android.util.Base64
 import com.jvapp.meudinheiro.activity.MainActivity
 import com.jvapp.meudinheiro.activity.DespesasActivity
 import com.jvapp.meudinheiro.activity.ReceitasActivity
@@ -46,20 +47,13 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.jvapp.meudinheiro.adapter.AdapterMovimentacao.MyViewHolder
 import com.google.firebase.database.Exclude
 
-class Usuario {
-    @get:Exclude
-    var idUsuario: String? = null
-    var nome: String? = null
-    var email: String? = null
+object Base64Custom {
+    fun codificarBase64(texto: String?): String {
+        return Base64.encodeToString(texto!!.toByteArray(), Base64.DEFAULT)
+            .replace("(\\n|\\r)".toRegex(), "")
+    }
 
-    @get:Exclude
-    var senha: String? = null
-    var receitaTotal = 0.00
-    var despesaTotal = 0.00
-    fun salvar() {
-        val firebase = ConfiguracaoFirebase.getFirebase()
-        firebase.child("usuarios")
-            .child(idUsuario!!)
-            .setValue(this)
+    fun decodificarBase64(textoCodificado: String?): String {
+        return String(Base64.decode(textoCodificado, Base64.DEFAULT))
     }
 }

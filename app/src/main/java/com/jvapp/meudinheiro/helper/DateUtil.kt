@@ -1,4 +1,4 @@
-package com.jvapp.meudinheiro.model
+package com.jvapp.meudinheiro.helper
 
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.EditText
@@ -45,21 +45,21 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener
 import com.jvapp.meudinheiro.adapter.AdapterMovimentacao.MyViewHolder
 import com.google.firebase.database.Exclude
+import java.text.SimpleDateFormat
 
-class Usuario {
-    @get:Exclude
-    var idUsuario: String? = null
-    var nome: String? = null
-    var email: String? = null
+object DateUtil {
+    fun dataAtual(): String {
+        val date = System.currentTimeMillis()
+        val simpleDateFormat =
+            SimpleDateFormat("dd/MM/yyyy")
+        return simpleDateFormat.format(date)
+    }
 
-    @get:Exclude
-    var senha: String? = null
-    var receitaTotal = 0.00
-    var despesaTotal = 0.00
-    fun salvar() {
-        val firebase = ConfiguracaoFirebase.getFirebase()
-        firebase.child("usuarios")
-            .child(idUsuario!!)
-            .setValue(this)
+    fun dataMesAno(data: String): String {
+        val retornoData = data.split("/").toTypedArray()
+        val dia = retornoData[0] //dia
+        val mes = retornoData[1] //mes
+        val ano = retornoData[2] //ano
+        return mes + ano
     }
 }
